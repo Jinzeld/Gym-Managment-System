@@ -1,56 +1,56 @@
 <?php
+require_once "config.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'create') {
-    $name_first = $_POST['name_first'];
-    $name_last = $_POST['name_last'];
-    $specialty = $_POST['specialty'];
-    $email = $_POST['email'];
-
-    $sql = "INSERT INTO Instructor (name_first, name_last, specialty, email) VALUES ('$name_first', '$name_last', '$specialty', '$email')";
-    if ($conn->query($sql) === TRUE) {
-        echo "New instructor added successfully!";
+//CREATE: Add a new instructor
+if (isset($_POST['add_instructor'])) {
+    $sql = "INSERT INTO Instructor (instructor_id, first_name, last_name, specialty, email) VALUES (?, ?, ?, ?, ?)";
+    if ($stmt = mysqli_prepare($link, $sql)) {
+        mysqli_stmt_bind_param($stmt, "issss", $_POST['instructor_id'], $_POST['first_name'], $_POST['last_name'], $_POST['specialty'], $_POST['email']);
+        mysqli_stmt_execute($stmt);
+        echo "Instructor added successfully.";
+        mysqli_stmt_close($stmt);
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "ERROR: Could not execute query: $sql. " . mysqli_error($link);
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'retrieve') {
-    $sql = "SELECT * FROM Instructor";
-    $result = $conn->query($sql);
+// READ: Fetch all memberships
+$sql = "SELECT * FROM Instructor";
+if ($result = mysqli_query($link, $sql)) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "ID: {$row['instructor_id']}, First Name: {$row['first_name']}, Last Name: {$row['last_name']}, Specialty: {$row['specialty']}, {$row['email']}<br>";
+    }
+    mysqli_free_result($result);
+}
 
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo "ID: " . $row["instructor_id"] . " - Name: " . $row["name_first"] . " " . $row["name_last"] . " - Specialty: " . $row["specialty"] . " - Email: " . $row["email"] . "<br>";
+//UPDATE: Updates the instructor information
+if (isset($_POST['update_instructor'])) {
+    $sql = "UPDATE Instructor SET first_name=?, last_name=?, specialty=?, email=? WHERE instructor_id=?";
+    if ($stmt = mysqli_prepare($link, $sql)) {
+        mysqli_stmt_bind_param($stmt, "sssii", $_POST['first_name'], $_POST['last_name'], $_POST['specialty'], $_POST['email'], $_POST['instructor_id']);
+        if (mysqli_stmt_execute($stmt)) {
+            echo "Instructor updated successfully.";
+        } else {
+            echo "ERROR: Could not execute query: $sql. " . mysqli_error($link);
         }
+        mysqli_stmt_close($stmt);
     } else {
-        echo "No instructors found.";
+        echo "ERROR: Could not prepare query: $sql. " . mysqli_error($link);
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update') {
-    $instructor_id = $_POST['instructor_id'];
-    $name_first = $_POST['name_first'];
-    $name_last = $_POST['name_last'];
-    $specialty = $_POST['specialty'];
-    $email = $_POST['email'];
-
-    $sql = "UPDATE Instructor SET name_first='$name_first', name_last='$name_last', specialty='$specialty', email='$email' WHERE instructor_id=$instructor_id";
-    if ($conn->query($sql) === TRUE) {
-        echo "Instructor updated successfully!";
+// DELETE: Remove a instructor
+if (isset($_POST['delete_instructor'])) {
+    $sql = "DELETE FROM Instructor WHERE instructor_id=?";
+    if ($stmt = mysqli_prepare($link, $sql)) {
+        mysqli_stmt_bind_param($stmt, "i", $_POST['instructor_id']);
+        mysqli_stmt_execute($stmt);
+        echo "Instructor deleted successfully.";
+        mysqli_stmt_close($stmt);
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "ERROR: Could not execute query: $sql. " . mysqli_error($link);
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete') {
-    $instructor_id = $_POST['instructor_id'];
-
-    $sql = "DELETE FROM Instructor WHERE instructor_id=$instructor_id";
-    if ($conn->query($sql) === TRUE) {
-        echo "Instructor deleted successfully!";
-    } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
-    }
-}
-
+mysqli_close($link);
 ?>
