@@ -41,7 +41,7 @@ Administrators can modify all classes and memberships
 
 <img width="496" alt="image" src="https://github.com/user-attachments/assets/4a331144-1f39-4739-a611-ccb8d5e840cd"> 
 
-Queries:
+## Queries:
 
 CREATE:
 CREATE TABLE Members (
