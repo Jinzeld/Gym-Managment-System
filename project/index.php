@@ -17,10 +17,6 @@
     
     <style type="text/css">
 
-        *{
-            background-color: grey;
-        }
-
         .wrapper {
             width: 80%;
             margin: 20px auto;
@@ -32,12 +28,16 @@
 </head>
 <body>
     <div class="wrapper">
-        <div class="container-fluid">
+        <div class="page-header clearfix">
+            <h2>Gym Management System</h2>
+            <h4>Made by Shengwei Zhu and JinHui Zhen</h4>
+        </div>
+            <div class="image-container">
             <div class="row">
                 <div class="col-md-12">
                     <div class="page-header clearfix">
                         <h2 class="pull-left">Gym Members</h2>
-                        <a href="addMember.php" class="btn btn-success pull-right">Add New Member</a>
+                        <a href="newMembers.php" class="btn btn-success pull-right">Add New Member</a>
                     </div>
                     
                     <?php
@@ -45,25 +45,32 @@
                         require_once "config.php";
 
                         // Fetch members
-                        $sql = "SELECT member_id, name_first, name_last, status FROM Member";
+                        $sql = "SELECT member_id, membership_id, first_name, last_name, email, phone, city, state, status FROM Member";
                         if ($result = mysqli_query($link, $sql)) {
                             if (mysqli_num_rows($result) > 0) {
                                 echo "<table class='table table-bordered table-striped'>";
                                 echo "<thead>";
                                 echo "<tr>";
                                 echo "<th>Member ID</th>";
+                                echo "<th>Membership ID</th>";
                                 echo "<th>First Name</th>";
                                 echo "<th>Last Name</th>";
+                                echo "<th>Email</th>";
+                                echo "<th>Phone</th>";
+                                echo "<th>Location</th>";
                                 echo "<th>Status</th>";
-                                echo "<th>Action</th>";
                                 echo "</tr>";
                                 echo "</thead>";
                                 echo "<tbody>";
                                 while ($row = mysqli_fetch_array($result)) {
                                     echo "<tr>";
                                     echo "<td>" . $row['member_id'] . "</td>";
-                                    echo "<td>" . $row['name_first'] . "</td>";
-                                    echo "<td>" . $row['name_last'] . "</td>";
+                                    echo "<td>" . $row['membership_id'] . "</td>";
+                                    echo "<td>" . $row['first_name'] . "</td>";
+                                    echo "<td>" . $row['last_name'] . "</td>";
+                                    echo "<td>" . $row['email'] . "</td>";
+                                    echo "<td>" . $row['phone'] . "</td>";
+                                    echo "<td>" . $row['city'] . ", " . $row['state'] . "</td>";
                                     echo "<td>" . $row['status'] . "</td>";
                                     echo "<td>";
                                     echo "<a href='viewClasses.php?member_id=" . $row['member_id'] . "' title='View Classes' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
@@ -82,23 +89,25 @@
                             echo "ERROR: Could not execute $sql. " . mysqli_error($link);
                         }
                         
-                        // Membership Stats
-                        echo "<br><h2>Membership Stats</h2>";
-                        $sql2 = "SELECT membership_id, COUNT(member_id) AS member_count FROM Member GROUP BY membership_id";
+                        // Fetch Membership Types
+                        echo "<br><h2>Membership Types</h2>";
+                        $sql2 = "SELECT membership_id, price, type FROM Membership";
                         if ($result2 = mysqli_query($link, $sql2)) {
                             if (mysqli_num_rows($result2) > 0) {
                                 echo "<table class='table table-bordered table-striped'>";
                                 echo "<thead>";
                                 echo "<tr>";
                                 echo "<th>Membership ID</th>";
-                                echo "<th>Number of Members</th>";
+                                echo "<th>Price</th>";
+                                echo "<th>Type</th>";
                                 echo "</tr>";
                                 echo "</thead>";
                                 echo "<tbody>";
                                 while ($row = mysqli_fetch_array($result2)) {
                                     echo "<tr>";
                                     echo "<td>" . $row['membership_id'] . "</td>";
-                                    echo "<td>" . $row['member_count'] . "</td>";
+                                    echo "<td>" . "$" . $row['price'] . "</td>";
+                                    echo "<td>" . $row['type'] . "</td>";
                                     echo "</tr>";
                                 }
                                 echo "</tbody>";
@@ -109,6 +118,79 @@
                             }
                         } else {
                             echo "ERROR: Could not execute $sql2. " . mysqli_error($link);
+                        }
+
+                        //Fetch Instructors
+                        echo "<br><h2>Instructors</h2>";
+                        $sql3 = "SELECT instructor_id, first_name, last_name, specialty, email FROM Instructor";
+                        if ($result3 = mysqli_query($link, $sql3)){
+                            if(mysqli_num_rows($result3) > 0){
+                                echo "<table class='table table-bordered table-striped'>";
+                                echo "<thead>";
+                                echo "<tr>";
+                                echo "<th>Instructor ID</th>";
+                                echo "<th>First Name</th>";
+                                echo "<th>Last Name</th>";
+                                echo "<th>Specialty</th>";
+                                echo "<th>Email</th>";
+                                echo "</tr>";
+                                echo "</thead>";
+                                echo "<tbody>";
+                                while ($row = mysqli_fetch_array($result3)){
+                                    echo "<tr>";
+                                    echo "<td>" . $row['instructor_id'] . "</td>";
+                                    echo "<td>" . $row['first_name'] . "</td>";
+                                    echo "<td>" . $row['last_name'] . "</td>";
+                                    echo "<td>" . $row['specialty'] . "</td>";
+                                    echo "<td>" . $row['email'] . "</td>";
+                                    echo "</tr>";
+                                }
+                                echo "</tbody>";
+                                echo "</table>";
+                                mysqli_free_result($result3);
+                            } else {
+                                echo "<p class='lead'><em>No instructor data available.</em></p>";
+                            }
+                        } else {
+                            echo "ERROR: Could not execute $sql3. " . mysqli_error($link);
+                        }
+
+                        // Fetch classes
+                        echo "<br><h2>Classes</h2>";
+                        $sql4 = "SELECT class_id, instructor_id, class_name, capacity, days, time_slot FROM Class";
+                        if ($result4 = mysqli_query($link, $sql4)){
+                            if(mysqli_num_rows($result4) > 0){
+                                echo "<table class='table table-bordered table-striped'>";
+                                echo "<thead>";
+                                echo "<tr>";
+                                echo "<th>Class ID</th>";
+                                echo "<th>Instructor ID</th>";
+                                echo "<th>Name</th>";
+                                echo "<th>Capacity</th>";
+                                echo "<th>Days</th>";
+                                echo "<th>Time_slot</th>";
+                                echo "</tr>";
+                                echo "</thead>";
+                                echo "<tbody>";
+                            
+                                while ($row = mysqli_fetch_array($result4)){
+                                    echo "<tr>";
+                                    echo "<td>" . $row['class_id'] . "</td>";
+                                    echo "<td>" . $row['instructor_id'] . "</td>";
+                                    echo "<td>" . $row['class_name'] . "</td>";
+                                    echo "<td>" . $row['capacity'] . "</td>";
+                                    echo "<td>" . $row['days'] . "</td>";
+                                    echo "<td>" . $row['time_slot'] . "</td>";
+                                    echo "</tr>";
+                                }
+                                echo "</tbody>";
+                                echo "</table>";
+                                mysqli_free_result($result4);
+                            } else {
+                                echo "<p class='lead'><em>No class data available.</em></p>";
+                            }
+                        } else {
+                            echo "ERROR: Could not execute $sql4. " . mysqli_error($link);
                         }
 
                         // Close connection
