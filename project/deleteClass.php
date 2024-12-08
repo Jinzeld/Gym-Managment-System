@@ -1,50 +1,50 @@
 <?php
-session_start();
+    session_start();
 
-// Check if the Class ID (`Class_id`) is provided in the URL
-if (isset($_GET["class_id"]) && !empty(trim($_GET["class_id"]))) {
-    // Store the Class's ID in the session for later use
-    $_SESSION["class_id"] = $_GET["class_id"];
-    $class_id = $_GET["class_id"];
-}
+    // Check if the Class ID (`Class_id`) is provided in the URL
+    if (isset($_GET["class_id"]) && !empty(trim($_GET["class_id"]))) {
+        // Store the Class's ID in the session for later use
+        $_SESSION["class_id"] = $_GET["class_id"];
+        $class_id = $_GET["class_id"];
+    }
 
-require_once "config.php";
+    require_once "config.php";
 
-// Handle the deletion when the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
-    // DELETE Class
-    if (isset($_POST['delete_class'])) {
-        $class_id = intval($_POST['class_id']);
+    // Handle the deletion when the form is submitted
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        
+        // DELETE Class
+        if (isset($_POST['delete_class'])) {
+            $class_id = intval($_POST['class_id']);
 
-        $sql = "DELETE FROM Class WHERE class_id=?";
-        if ($stmt = mysqli_prepare($link, $sql)) {
-            mysqli_stmt_bind_param($stmt, "i", $class_id);
+            $sql = "DELETE FROM Class WHERE class_id=?";
+            if ($stmt = mysqli_prepare($link, $sql)) {
+                mysqli_stmt_bind_param($stmt, "i", $class_id);
 
-            if (mysqli_stmt_execute($stmt)) {
-                echo "Class deleted successfully.";
-                $param_class_id = $class_id;
-
-                // Attempt to execute the prepared statement
                 if (mysqli_stmt_execute($stmt)) {
-                    header("location: index.php");
-                    exit();
-                    
+                    echo "Class deleted successfully.";
+                    $param_class_id = $class_id;
+
+                    // Attempt to execute the prepared statement
+                    if (mysqli_stmt_execute($stmt)) {
+                        header("location: index.php");
+                        exit();
+                        
+                    } else {
+                        echo "<p style='color: red;'>Error deleting the Class record. Please try again.</p>";
+                    }
+                // Close the prepared statement
+                    mysqli_stmt_close($stmt);
                 } else {
-                    echo "<p style='color: red;'>Error deleting the Class record. Please try again.</p>";
+                    echo "Error: Could not execute query: " . mysqli_error($link);
                 }
-               // Close the prepared statement
+
                 mysqli_stmt_close($stmt);
             } else {
-                echo "Error: Could not execute query: " . mysqli_error($link);
+                echo "Error: Unable to prepare the SQL statement.";
             }
-
-            mysqli_stmt_close($stmt);
-        } else {
-            echo "Error: Unable to prepare the SQL statement.";
         }
     }
-}
 ?>
 
 <!DOCTYPE html>
