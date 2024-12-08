@@ -16,7 +16,35 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     
     <style type="text/css">
-
+       
+        .navbar-custom {
+        background-color: gray; 
+        color: white;
+        padding: 15px;
+        margin-bottom: 20px;
+        }
+        .navbar-custom h2, .navbar-custom h4 {
+            margin: 0;
+            color: white;
+        }
+        .navbar-custom a {
+            color: white;
+            text-decoration: none;
+        }
+        .navbar-custom .btn {
+            margin-left: 10px;
+        }
+        .image-container {
+            text-align: left;
+            margin: 20px 0;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+        }
+        .page-header h2 {
+            margin-top: 0;
+        }
         .wrapper {
             width: 80%;
             margin: 20px auto;
@@ -28,11 +56,23 @@
 </head>
 <body>
     <div class="wrapper">
-        <div class="page-header clearfix">
-            <h2>Gym Management System</h2>
-            <h4>Made by Shengwei Zhu and JinHui Zhen</h4>
+        <div class="navbar-custom">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h2>Gym Management System</h2>
+                        <h4>Made by Shengwei Zhu and JinHui Zhen</h4>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <!-- View Switching Buttons -->
+                        <a href="./memberView/index.php" class="btn btn-success">Member View</a>
+                        <a href="./instructorView/index.php" class="btn btn-primary">Instructor View</a>
+                    </div>
+                </div>
+            </div>
         </div>
-            <div class="image-container">
+        <div class="image-container">
+            <img src="https://static.vecteezy.com/system/resources/thumbnails/026/781/389/small_2x/gym-interior-background-of-dumbbells-on-rack-in-fitness-and-workout-room-photo.jpg" alt="Gym Image" class="img-responsive">
             <div class="row">
                 <div class="col-md-12">
                     <div class="page-header clearfix">
@@ -41,7 +81,6 @@
                     </div>
                     
                     <?php
-                    
                         // Include config file
                         require_once "config.php";
 
@@ -60,6 +99,7 @@
                                 echo "<th>Phone</th>";
                                 echo "<th>Location</th>";
                                 echo "<th>Status</th>";
+                                echo "<th>Action</th>";
                                 echo "</tr>";
                                 echo "</thead>";
                                 echo "<tbody>";
@@ -89,7 +129,8 @@
                         } else {
                             echo "ERROR: Could not execute $sql. " . mysqli_error($link);
                         }
-                        
+                    ?>
+                    <?php
                         // Fetch Membership Types
                         echo "<br><h2>Membership Types</h2>";
                         $sql2 = "SELECT membership_id, price, type FROM Membership";
@@ -120,9 +161,14 @@
                         } else {
                             echo "ERROR: Could not execute $sql2. " . mysqli_error($link);
                         }
-
+                    ?>
+                    <div class="page-header clearfix">
+                        
+                        <h2 class="pull-left">Instructor</h2>
+                    <a href="newInstructor.php" class="btn btn-success pull-right">Add New Instructor</a>
+                    </div>
+                    <?php
                         //Fetch Instructors
-                        echo "<br><h2>Instructors</h2>";
                         $sql3 = "SELECT instructor_id, first_name, last_name, specialty, email FROM Instructor";
                         if ($result3 = mysqli_query($link, $sql3)){
                             if(mysqli_num_rows($result3) > 0){
@@ -134,6 +180,7 @@
                                 echo "<th>Last Name</th>";
                                 echo "<th>Specialty</th>";
                                 echo "<th>Email</th>";
+                                echo "<th>Action</th>";
                                 echo "</tr>";
                                 echo "</thead>";
                                 echo "<tbody>";
@@ -144,6 +191,11 @@
                                     echo "<td>" . $row['last_name'] . "</td>";
                                     echo "<td>" . $row['specialty'] . "</td>";
                                     echo "<td>" . $row['email'] . "</td>";
+                                    echo "<td>";
+                                    echo "<a href='viewInstructor.php?Instructor_id=" . $row['instructor_id'] . "' title='View Classes' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
+                                    echo "<a href='updateInstructor.php?Instructor_id=" . $row['instructor_id'] . "' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
+                                    echo "<a href='deleteInstructor.php?Instructor_id=" . $row['instructor_id'] . "' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
+                                    echo "</td>";
                                     echo "</tr>";
                                 }
                                 echo "</tbody>";
@@ -155,9 +207,13 @@
                         } else {
                             echo "ERROR: Could not execute $sql3. " . mysqli_error($link);
                         }
-
+                    ?>
+                    <div class="page-header clearfix">
+                        <h2 class="pull-left">Classes</h2>
+                        <a href="newClass.php" class="btn btn-success pull-right">Add New Class</a>
+                    </div>
+                    <?php
                         // Fetch classes
-                        echo "<br><h2>Classes</h2>";
                         $sql4 = "SELECT class_id, instructor_id, class_name, capacity, days, time_slot FROM Class";
                         if ($result4 = mysqli_query($link, $sql4)){
                             if(mysqli_num_rows($result4) > 0){
@@ -167,9 +223,10 @@
                                 echo "<th>Class ID</th>";
                                 echo "<th>Instructor ID</th>";
                                 echo "<th>Name</th>";
-                                echo "<th>Capacity</th>";
                                 echo "<th>Days</th>";
-                                echo "<th>Time_slot</th>";
+                                echo "<th>Class Times</th>";
+                                echo "<th>Capacity</th>";
+                                echo "<th>Action</th>";
                                 echo "</tr>";
                                 echo "</thead>";
                                 echo "<tbody>";
@@ -179,9 +236,13 @@
                                     echo "<td>" . $row['class_id'] . "</td>";
                                     echo "<td>" . $row['instructor_id'] . "</td>";
                                     echo "<td>" . $row['class_name'] . "</td>";
-                                    echo "<td>" . $row['capacity'] . "</td>";
                                     echo "<td>" . $row['days'] . "</td>";
                                     echo "<td>" . $row['time_slot'] . "</td>";
+                                    echo "<td>" . $row['capacity'] . "</td>";
+                                    echo "<td>";
+                                    echo "<a href='updateClass.php?class_id=" . $row['class_id'] . "' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
+                                    echo "<a href='deleteClass.php?class_id=" . $row['class_id'] . "' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
+                                    echo "</td>";
                                     echo "</tr>";
                                 }
                                 echo "</tbody>";
@@ -201,5 +262,10 @@
             </div>        
         </div>
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 </body>
 </html>
