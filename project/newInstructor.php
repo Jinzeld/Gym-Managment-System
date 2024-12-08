@@ -47,12 +47,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check for errors before inserting into the database
     if (empty($first_name_err) && empty($last_name_err) && empty($email_err) && empty($specialty_err)) {
         // Prepare the SQL query
-        $sql = "INSERT INTO Instructor (first_name, last_name, email, specialty) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO Instructor (instructor_id, first_name, last_name, email, specialty) VALUES (?, ?, ?, ?, ?)";
 
         if ($stmt = mysqli_prepare($link, $sql)) {
-            mysqli_stmt_bind_param($stmt, "ssss", $param_first_name, $param_last_name, $param_email, $param_specialty);
+            mysqli_stmt_bind_param($stmt, "issss", $param_instructor_id, $param_first_name, $param_last_name, $param_email, $param_specialty);
 
             // Set parameters
+            $param_instructor_id = $instructor_id;
             $param_first_name = $first_name;
             $param_last_name = $last_name;
             $param_email = $email;
