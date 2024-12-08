@@ -16,7 +16,35 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     
     <style type="text/css">
-
+       
+        .navbar-custom {
+        background-color: gray; 
+        color: white;
+        padding: 15px;
+        margin-bottom: 20px;
+        }
+        .navbar-custom h2, .navbar-custom h4 {
+            margin: 0;
+            color: white;
+        }
+        .navbar-custom a {
+            color: white;
+            text-decoration: none;
+        }
+        .navbar-custom .btn {
+            margin-left: 10px;
+        }
+        .image-container {
+            text-align: left;
+            margin: 20px 0;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+        }
+        .page-header h2 {
+            margin-top: 0;
+        }
         .wrapper {
             width: 80%;
             margin: 20px auto;
@@ -28,11 +56,23 @@
 </head>
 <body>
     <div class="wrapper">
-        <div class="page-header clearfix">
-            <h2>Gym Management System</h2>
-            <h4>Made by Shengwei Zhu and JinHui Zhen</h4>
+        <div class="navbar-custom">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h2>Gym Management System</h2>
+                        <h4>Made by Shengwei Zhu and JinHui Zhen</h4>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <!-- View Switching Buttons -->
+                        <a href="./memberView/index.php" class="btn btn-success">Member View</a>
+                        <a href="./instructorView/index.php" class="btn btn-primary">Instructor View</a>
+                    </div>
+                </div>
+            </div>
         </div>
-            <div class="image-container">
+        <div class="image-container">
+            <img src="https://static.vecteezy.com/system/resources/thumbnails/026/781/389/small_2x/gym-interior-background-of-dumbbells-on-rack-in-fitness-and-workout-room-photo.jpg" alt="Gym Image" class="img-responsive">
             <div class="row">
                 <div class="col-md-12">
                     <div class="page-header clearfix">
@@ -152,9 +192,9 @@
                                     echo "<td>" . $row['specialty'] . "</td>";
                                     echo "<td>" . $row['email'] . "</td>";
                                     echo "<td>";
-                                    echo "<a href='instructorVue/viewInstructor.php?Instructor_id=" . $row['instructor_id'] . "' title='View Classes' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
-                                    echo "<a href='instructorVue/updateInstructor.php?Instructor_id=" . $row['instructor_id'] . "' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
-                                    echo "<a href='instructorVue/deleteInstrucotr.php?Instructor_id=" . $row['instructor_id'] . "' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
+                                    echo "<a href='viewInstructor.php?Instructor_id=" . $row['instructor_id'] . "' title='View Classes' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
+                                    echo "<a href='updateInstructor.php?Instructor_id=" . $row['instructor_id'] . "' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
+                                    echo "<a href='deleteInstructor.php?Instructor_id=" . $row['instructor_id'] . "' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
                                     echo "</td>";
                                     echo "</tr>";
                                 }
@@ -200,8 +240,8 @@
                                     echo "<td>" . $row['time_slot'] . "</td>";
                                     echo "<td>" . $row['capacity'] . "</td>";
                                     echo "<td>";
-                                    echo "<a href='updateclass.php?class_id=" . $row['class_id'] . "' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
-                                    echo "<a href='deleteclass.php?class_id=" . $row['class_id'] . "' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
+                                    echo "<a href='updateClass.php?class_id=" . $row['class_id'] . "' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
+                                    echo "<a href='deleteClass.php?class_id=" . $row['class_id'] . "' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
                                     echo "</td>";
                                     echo "</tr>";
                                 }
@@ -222,5 +262,10 @@
             </div>        
         </div>
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 </body>
 </html>
