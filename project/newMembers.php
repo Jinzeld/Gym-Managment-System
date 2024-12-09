@@ -66,6 +66,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container">
         <h1 class="mt-4">Add New Member</h1>
         <form method="POST" action="newMembers.php">
+            <p><b>Instructions: </b>To add a new member, first select a membership type.
+            <br>After selecting a membership, enter the member's full name, email address,
+            <br>phone number, city and state, and status.</p>
+            <p><b>Note: The member's status must be active in order for them to register for classes.
+                <br>Inactive members will NOT be able to signup or enroll in any classes.
+            </b></p><br>
             <div class="form-group">
                 <label for="membership_id">Membership Type:</label>
                 <select class="form-control" id="membership_id" name="membership_id" required>
