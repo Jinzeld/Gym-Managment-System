@@ -1,7 +1,7 @@
 <?php
     session_start();
 
-    // Check if the Class ID (`Class_id`) is provided in the URL
+    // Check if the Class ID (Class_id) is provided in the URL
     if (isset($_GET["class_id"]) && !empty(trim($_GET["class_id"]))) {
         // Store the Class's ID in the session for later use
         $_SESSION["class_id"] = $_GET["class_id"];
@@ -48,38 +48,38 @@
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Delete Class</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
-    <style>
-        .wrapper {
-            width: 500px;
-            margin: 0 auto;
-        }
-    </style>
-</head>
-<body>
-    <div class="wrapper">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="page-header">
-                        <h1>Delete Class</h1>
-                    </div>
-                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                        <div class="alert alert-danger fade in">
-                            <input type="hidden" name="class_id" value="<?php echo ($_SESSION["class_id"]); ?>"/>
-                            <p>Are you sure you want to delete the record for Class ID: 
-                                <b><?php echo htmlspecialchars($_SESSION["class_id"]); ?></b>?</p><br>
-                            <button type="submit" name="delete_class"class="btn btn-danger">Yes</button>
-                            <a href="index.php" class="btn btn-default">No</a>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Delete Class</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
+        <style>
+            .wrapper {
+                width: 500px;
+                margin: 0 auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="page-header">
+                            <h1>Delete Class</h1>
                         </div>
-                    </form>
-                </div>
-            </div>        
+                        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                            <div class="alert alert-danger fade in">
+                                <input type="hidden" name="class_id" value="<?php echo ($_SESSION["class_id"]); ?>"/>
+                                <p>Are you sure you want to delete the record for Class ID: 
+                                    <b><?php echo htmlspecialchars($_SESSION["class_id"]); ?></b>?</p><br>
+                                <button type="submit" name="delete_class"class="btn btn-danger">Yes</button>
+                                <a href="index.php" class="btn btn-default">No</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>        
+            </div>
         </div>
-    </div>
-</body>
+    </body>
 </html>
