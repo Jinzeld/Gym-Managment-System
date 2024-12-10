@@ -1,89 +1,91 @@
 <?php
-session_start();
+    session_start();
+    require_once "config.php";
 
-// Check if the member ID (`member_id`) is provided in the URL
-if (isset($_GET["member_id"]) && !empty(trim($_GET["member_id"]))) {
-    // Store the member's ID in the session for later use
-    $_SESSION["member_id"] = $_GET["member_id"];
-    $member_id = $_GET["member_id"];
-}
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
 
-require_once "config.php";
+    // Handle delete request
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_membership'])) {
+        $membership_id = intval($_POST['membership_id']); // Retrieve the ID to delete
 
-// Handle the deletion when the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_SESSION["member_id"]) && !empty($_SESSION["member_id"])) {
-        $member_id = $_SESSION["member_id"];
-
-        // Prepare the DELETE SQL statement
-        $sql = "DELETE FROM members WHERE member_id = ?";
-
+        // Delete query
+        $sql = "DELETE FROM Membership WHERE membership_id = ?";
         if ($stmt = mysqli_prepare($link, $sql)) {
-            // Bind the `member_id` parameter to the prepared statement
-            mysqli_stmt_bind_param($stmt, "i", $param_member_id);
+            mysqli_stmt_bind_param($stmt, "i", $membership_id);
 
-            // Set the parameter
-            $param_member_id = $member_id;
-
-            // Attempt to execute the prepared statement
             if (mysqli_stmt_execute($stmt)) {
-                // Member record deleted successfully
-                header("location: index.php"); // Redirect to landing page
-                exit();
+                echo "<p style='color: green;'>Membership deleted successfully!</p>";
             } else {
-                echo "<p style='color: red;'>Error deleting the member record. Please try again.</p>";
+                echo "<p style='color: red;'>Error: Unable to delete membership. " . mysqli_error($link) . "</p>";
             }
 
-            // Close the prepared statement
             mysqli_stmt_close($stmt);
+        } else {
+            echo "<p style='color: red;'>Error: Could not prepare the delete query.</p>";
         }
     }
 
-    // Close the database connection
-    mysqli_close($link);
-} else {
-    // Ensure the `member_id` is valid and exists in the URL
-    if (empty(trim($_GET["member_id"]))) {
-        // Redirect to an error page if no valid `member_id` is provided
-        header("location: error.php");
-        exit();
+    // Fetch all memberships
+    $sql = "SELECT membership_id, type, price FROM Membership ORDER BY membership_id";
+    $result = mysqli_query($link, $sql);
+
+    if (!$result) {
+        die("Error fetching memberships: " . mysqli_error($link));
     }
-}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Delete Member</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
-    <style>
-        .wrapper {
-            width: 500px;
-            margin: 0 auto;
-        }
-    </style>
-</head>
-<body>
-    <div class="wrapper">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="page-header">
-                        <h1>Delete Member</h1>
-                    </div>
-                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                        <div class="alert alert-danger fade in">
-                            <input type="hidden" name="member_id" value="<?php echo ($_SESSION["member_id"]); ?>"/>
-                            <p>Are you sure you want to delete the record for Member ID: 
-                                <b><?php echo htmlspecialchars($_SESSION["member_id"]); ?></b>?</p><br>
-                            <input type="submit" value="Yes" class="btn btn-danger">
-                            <a href="index.php" class="btn btn-default">No</a>
-                        </div>
-                    </form>
-                </div>
-            </div>        
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Manage Memberships</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="mt-4">Manage Memberships</h1>
+
+            <?php if (mysqli_num_rows($result) > 0): ?>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Membership ID</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($row['membership_id']); ?></td>
+                                <td><?php echo htmlspecialchars($row['type']); ?></td>
+                                <td>$<?php echo htmlspecialchars($row['price']); ?></td>
+                                <td>
+                                    <!-- Delete Membership Form -->
+                                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" style="display:inline;">
+                                        <input type="hidden" name="membership_id" value="<?php echo htmlspecialchars($row['membership_id']); ?>">
+                                        <button type="submit" name="delete_membership" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this membership?');">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p class="lead"><em>No memberships found.</em></p>
+            <?php endif; ?>
+
+            <button class="btn btn-default" onclick="window.location.href='index.php';">Back</button>
         </div>
-    </div>
-</body>
+    </body>
 </html>
+
+<?php
+    // Free result set and close the connection
+    mysqli_free_result($result);
+    mysqli_close($link);
+?>
